@@ -1,0 +1,37 @@
+//messgae queue sender
+#include <stdio.h>
+#include <string.h>
+#include <mqueue.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+
+#define MQ_NAME "/my_queue"
+#define MAX_SIZE 100
+
+int main()
+{
+    mqd_t mq;
+    struct mq_attr attr;
+    char input[MAX_SIZE];
+
+    
+    attr.mq_flags = 0;            
+    attr.mq_maxmsg = 10;          
+    attr.mq_msgsize = MAX_SIZE;   
+    attr.mq_curmsgs = 0;
+
+    
+    mq = mq_open(MQ_NAME, O_CREAT | O_WRONLY, 0666, &attr);
+
+    
+    printf("sender type a message: ");
+    fgets(input, sizeof(input), stdin);
+
+    
+    mq_send(mq, input, strlen(input) + 1, 1);
+
+    printf("Message sent by sender\n");
+
+    mq_close(mq);
+    return 0;
+}
